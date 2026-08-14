@@ -189,7 +189,7 @@ async function flushPending(){
   for(const [k,op] of Object.entries(p)){
     try{op==='add'?await cloudAdd(k):await cloudDelete(k)}catch{break}
   }
-}}
+}
 async function fetchCloudState(){
   const url=`${FAVORITES_API}?select=activity_id&group_id=eq.${encodeURIComponent(GROUP_ID)}`;
   const r=await fetch(url,{headers:authHeaders()});if(!r.ok)throw new Error('cloud fetch');
