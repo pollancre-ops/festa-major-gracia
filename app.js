@@ -8,14 +8,15 @@ const SUPABASE_URL='https://girfbvvetgpisigzvvsy.supabase.co';
 const SUPABASE_KEY='sb_publishable_vYvy1hWUDtc0ltmYvCbcqA_ohekPQSn';
 const GROUP_ID='gracia26-x7k9';
 const FAVORITES_API=`${SUPABASE_URL}/rest/v1/favorites`;
-const STATE_MIGRATION_KEY=`festigracia-cloud-state-migrated-${GROUP_ID}-v5`;
+const STATE_MIGRATION_KEY=`festigracia-cloud-state-migrated-${GROUP_ID}-v7`;
 const PENDING_KEY=`festigracia-pending-${GROUP_ID}`;
-const DONE_PREFIX='done:';
-const YELLOW_SEED_VERSION='yellow-docx-v1';
+const DONE_PREFIX='done2:';
+const LEGACY_DONE_PREFIX='done:';
+const DONE_LOCAL_KEY='festigracia-done-v2';
+const YELLOW_SEED_VERSION='yellow-docx-v2';
 const YELLOW_SEED_MARKER=`__seed:${YELLOW_SEED_VERSION}`;
 const YELLOW_LOCAL_KEY=`festigracia-${YELLOW_SEED_VERSION}`;
-const DONE_REPAIR_VERSION='repair-done-v1';
-const DONE_REPAIR_MARKER=`__repair:${DONE_REPAIR_VERSION}`;
+
 const YELLOW_DEFAULTS=[{"date":"2026-08-15","start":"10:30","end":"13:30","location":"Plaça de les Dones del 36","title":"Activitats sostenibles (EcoJuga, Cursa de cavalls, ceràmica, bijuteria, cosmètica natural, titelles)"},{"date":"2026-08-15","start":"12:00","end":"","location":"Carrer La Perla","title":"Vermut rumbero amb Los Pelos del Gato"},{"date":"2026-08-15","start":"13:00","end":"","location":"Carrer Puigmartí","title":"Vermut musical amb Blue Chiefs"},{"date":"2026-08-15","start":"13:00","end":"","location":"Plaça del Nord","title":"Show Drag amb Klamy GoSy i Lucía Massalta"},{"date":"2026-08-15","start":"13:00","end":"","location":"Joan Blanques de Baix de Tot","title":"Vermut musical amb Alma de Boquerón"},{"date":"2026-08-15","start":"18:00","end":"","location":"Plaça Rovira i Trias","title":"Tardeig amb DJ Jade Rolt"},{"date":"2026-08-15","start":"18:30","end":"","location":"Gran de Gràcia → Plaça de la Vila","title":"Cercavila de cultura popular"},{"date":"2026-08-15","start":"20:00","end":"","location":"Carrer Ciudad Real","title":"Coral Iaioflautes"},{"date":"2026-08-15","start":"22:00","end":"","location":"Carrer Sant Pere Màrtir","title":"Drag Show amb Astra Bomb"},{"date":"2026-08-15","start":"23:00","end":"","location":"Plaça del Nord","title":"Arlanda + Set d'Índie + DJ"},{"date":"2026-08-15","start":"23:00","end":"","location":"Plaça John Lennon","title":"Concert Baby Jane"},{"date":"2026-08-16","start":"11:00","end":"","location":"Carrer Llibertat","title":"Taller de xapes (Societat Tolkien Barcelona)"},{"date":"2026-08-16","start":"12:00","end":"","location":"Carrer Mozart","title":"Ioga amb Xana Dahdal"},{"date":"2026-08-16","start":"12:00","end":"","location":"Joan Blanques de Baix","title":"Concert amb The Barroom Buddies Band"},{"date":"2026-08-16","start":"13:00","end":"","location":"Carrer Puigmartí","title":"Vermut i paella valenciana"},{"date":"2026-08-16","start":"13:00","end":"","location":"Plaça del Poble Gitano","title":"Vermut rumbero amb Peret Reyes, Yumitus del Pichón i Ezequiel"},{"date":"2026-08-16","start":"14:00","end":"","location":"Carrer Llibertat","title":"Botifarrada popular"},{"date":"2026-08-16","start":"14:00","end":"","location":"Joan Blanques de Baix de Tot","title":"Botifarrada popular"},{"date":"2026-08-16","start":"16:00","end":"","location":"Plaça del Raspall","title":"Rondalles amb Baül Creatiu"},{"date":"2026-08-16","start":"18:00","end":"","location":"Carrer Puigmartí","title":"Bingo musical"},{"date":"2026-08-16","start":"18:00","end":"","location":"Carrer Perill","title":"Taller de penjoll brodat"},{"date":"2026-08-16","start":"18:00","end":"","location":"Plaça Vila de Gràcia","title":"Quinto musical"},{"date":"2026-08-16","start":"18:00","end":"","location":"Carrer Mozart","title":"Activitat de ioga"},{"date":"2026-08-16","start":"18:00","end":"","location":"Fraternitat de Dalt","title":"Quinto musical"},{"date":"2026-08-16","start":"19:00","end":"","location":"Travessia Sant Antoni","title":"Miqui Puig (DJ)"},{"date":"2026-08-16","start":"19:00","end":"","location":"Joan Blanques de Baix","title":"Taller de ball en línia amb Xavi"},{"date":"2026-08-16","start":"21:00","end":"","location":"Plaça de les Dones del 36","title":"Taller de Lindy Hop"},{"date":"2026-08-16","start":"22:30","end":"","location":"Plaça de les Dones del 36","title":"Concert The A Swing Band"},{"date":"2026-08-16","start":"23:00","end":"","location":"Plaça Vila de Gràcia","title":"Préssecs, Pascuals i els Desnatats"},{"date":"2026-08-16","start":"23:00","end":"","location":"Fraternitat de Dalt","title":"Astra Bomb Drag Show + DJ Set"},{"date":"2026-08-16","start":"00:30","end":"","location":"La Torna","title":"PD Les 3 Maries"},{"date":"2026-08-17","start":"10:00","end":"","location":"Plaça de la Vila","title":"Visita guiada audiodescrita als carrers guarnits"},{"date":"2026-08-17","start":"11:00","end":"","location":"Joan Blanques de Baix","title":"Taller de pastisseria amb Forn Dismon"},{"date":"2026-08-17","start":"11:00","end":"","location":"Plaça del Raspall","title":"Vermut amb Cor Popular 4 Galls"},{"date":"2026-08-17","start":"12:00","end":"","location":"Placeta Sant Miquel","title":"Taller d'escriptura de cartes"},{"date":"2026-08-17","start":"12:30","end":"","location":"Plaça Vila de Gràcia","title":"Tast de vermuts de Reus amb David Bagés"},{"date":"2026-08-17","start":"12:30","end":"","location":"Plaça del Nord","title":"Vermut amb Los Swingin' Calaveras"},{"date":"2026-08-17","start":"12:30","end":"","location":"Carrer La Perla","title":"Concurs de truites"},{"date":"2026-08-17","start":"13:00","end":"","location":"Joan Blanques de Baix de Tot","title":"Vermut musical amb Stereo Daysis"},{"date":"2026-08-17","start":"14:00","end":"","location":"Plaça del Raspall","title":"Dinar popular"},{"date":"2026-08-17","start":"16:00","end":"","location":"Carrer Lluís Vives","title":"Campionat de dòmino Bar Vulcano"},{"date":"2026-08-17","start":"17:00","end":"","location":"Travessia Sant Antoni","title":"Citrina (R&B acústic)"},{"date":"2026-08-17","start":"17:30","end":"","location":"Plaça de les Dones del 36","title":"Taller de tote bags"},{"date":"2026-08-17","start":"18:00","end":"","location":"Carrer Tordera","title":"Xocolatada"},{"date":"2026-08-17","start":"18:00","end":"21:00","location":"La Torna","title":"Taller de serigrafia"},{"date":"2026-08-17","start":"19:30","end":"21:30","location":"Plaça de les Dones del 36","title":"Trivial col·lectiu per conèixer gent del barri"},{"date":"2026-08-17","start":"20:00","end":"","location":"Plaça del Raspall","title":"Sopar de carmanyola"},{"date":"2026-08-17","start":"21:00","end":"","location":"Carrer Mozart","title":"Cinema: The Rocky Horror Picture Show"},{"date":"2026-08-17","start":"21:00","end":"","location":"Plaça del Poble Gitano","title":"Xerrada \"Dona gitana i antigitanisme de gènere\""},{"date":"2026-08-17","start":"22:30","end":"","location":"Carrer Llibertat","title":"Nit de jocs de taula"},{"date":"2026-08-17","start":"23:00","end":"","location":"Carrer Verdi del Mig","title":"Open Mic \"L'Open de Verdi\""},{"date":"2026-08-17","start":"23:00","end":"","location":"Plaça del Nord","title":"Ukeoke acústic"},{"date":"2026-08-18","start":"10:00","end":"","location":"Plaça de les Dones del 36","title":"Tast d'instruments a càrrec de l'EMOG"},{"date":"2026-08-18","start":"10:00","end":"","location":"Plaça del Sol","title":"Passejada de gegantons pels carrers guarnits"},{"date":"2026-08-18","start":"10:30","end":"13:30","location":"Ateneu de Fabricació","title":"Disseny i fabricació amb tall làser"},{"date":"2026-08-18","start":"11:00","end":"","location":"Carrer Tordera","title":"Gimcana dels Anells"},{"date":"2026-08-18","start":"11:00","end":"","location":"Carrer Progrés","title":"Gimcana dels Anells"},{"date":"2026-08-18","start":"11:00","end":"","location":"Fraternitat de Dalt","title":"Gimcana dels Anells"},{"date":"2026-08-18","start":"11:00","end":"","location":"Fraternitat de Baix","title":"Gimcana dels Anells"},{"date":"2026-08-18","start":"11:30","end":"","location":"Fraternitat de Dalt","title":"Campionat de puzle per parelles"},{"date":"2026-08-18","start":"12:30","end":"","location":"Carrer Providència","title":"Vermut musical amb Banda La Porteña y Los Piratas"},{"date":"2026-08-18","start":"13:00","end":"","location":"Carrer Progrés","title":"Vermut musical amb Extramadors"},{"date":"2026-08-18","start":"13:00","end":"","location":"Carrer Berga","title":"Vermut musical"},{"date":"2026-08-18","start":"14:00","end":"","location":"Fraternitat de Baix","title":"Dinar amb Tordera"},{"date":"2026-08-18","start":"17:00","end":"","location":"Carrer Berga","title":"Taller de ceràmica de fang"},{"date":"2026-08-18","start":"18:00","end":"","location":"Carrer Ciudad Real","title":"Taller de ceràmica amb Felipe Rivera"},{"date":"2026-08-18","start":"18:00","end":"","location":"Carrer Sant Pere Màrtir","title":"Taller de balls tropicals i caribenys"},{"date":"2026-08-18","start":"18:00","end":"","location":"Carrer La Perla","title":"Justa Medieval"},{"date":"2026-08-18","start":"18:00","end":"","location":"Joan Blanques de Baix de Tot","title":"Taller de pastissos"},{"date":"2026-08-18","start":"19:30","end":"","location":"Plaça del Folk","title":"Taller de rumba amb Derrumband"},{"date":"2026-08-18","start":"21:00","end":"","location":"Carrer Sant Pere Màrtir","title":"Sopar popular amb rom cremat"},{"date":"2026-08-18","start":"22:00","end":"","location":"Carrer Tordera","title":"Karaoke"},{"date":"2026-08-18","start":"22:00","end":"","location":"Joan Blanques de Baix","title":"Concert amb Operación Disco"},{"date":"2026-08-18","start":"22:00","end":"","location":"Joan Blanques de Baix de Tot","title":"Nit de ball swing amb Swing Maniacs i Swing Shot Band"},{"date":"2026-08-18","start":"22:30","end":"","location":"Plaça de les Dones del 36","title":"Nit de rumba catalana amb Els Tets"},{"date":"2026-08-18","start":"23:00","end":"","location":"Carrer Providència","title":"Banda Malditos Temazos"},{"date":"2026-08-18","start":"00:00","end":"","location":"Carrer La Perla","title":"Espectacle Drag amb Allo-li Olé"},{"date":"2026-08-19","start":"10:00","end":"","location":"Parròquia Santa Maria de Gràcia","title":"Ruta \"La meva Barcelona: La Gràcia rumbera i industrial\""},{"date":"2026-08-19","start":"10:30","end":"13:30","location":"Ateneu de Fabricació","title":"Electrònica i programació per a la creació sonora"},{"date":"2026-08-19","start":"11:00","end":"","location":"Plaça del Raspall","title":"Vermut amb Cami Tal"},{"date":"2026-08-19","start":"11:30","end":"","location":"Carrer Lluís Vives","title":"Jocs de taula per a tothom"},{"date":"2026-08-19","start":"12:00","end":"","location":"Carrer Tordera","title":"Tertúlia amb Los Manolos"},{"date":"2026-08-19","start":"12:00","end":"","location":"Carrer Tordera","title":"Especial monòlegs \"Tinc idees\" amb Martí Sanante"},{"date":"2026-08-19","start":"12:30","end":"","location":"Carrer Providència","title":"Vermut musical Son de Gràcia"},{"date":"2026-08-19","start":"13:00","end":"","location":"Carrer Verdi del Mig","title":"Tast de vins amb HumanVins"},{"date":"2026-08-19","start":"14:00","end":"","location":"Carrer Sant Pere Màrtir","title":"Dinar popular (asado)"},{"date":"2026-08-19","start":"14:00","end":"","location":"Fraternitat de Dalt","title":"Dinar de veïnat"},{"date":"2026-08-19","start":"17:00","end":"","location":"Carrer Progrés","title":"Xaranga Mambo cap als premis"},{"date":"2026-08-19","start":"18:30","end":"","location":"Plaça de les Dones del 36","title":"Concert Todo sobre mi Gata"},{"date":"2026-08-19","start":"19:00","end":"","location":"Carrer Llibertat","title":"Havaneres amb Pirats pel Mar"},{"date":"2026-08-19","start":"20:00","end":"","location":"Placeta Sant Miquel","title":"Un Altre Mamma Mia (Encantando)"},{"date":"2026-08-19","start":"21:00","end":"","location":"Carrer Providència","title":"Botifarrada popular"},{"date":"2026-08-19","start":"21:00","end":"","location":"Plaça del Nord","title":"Homenatge a la gent gran i sopar de veïns"},{"date":"2026-08-19","start":"22:00","end":"","location":"Carrer Berga","title":"Concert amb Cobre Show"},{"date":"2026-08-19","start":"23:00","end":"","location":"Fraternitat de Dalt","title":"Nit de Karaoke"},{"date":"2026-08-20","start":"10:30","end":"13:30","location":"Ateneu de Fabricació","title":"Jam Session i experimentació sonora"},{"date":"2026-08-20","start":"12:30","end":"","location":"Plaça del Raspall","title":"Vermut amb Dal Yah"},{"date":"2026-08-20","start":"13:00","end":"","location":"Joan Blanques de Baix de Tot","title":"Vermut musical amb Books & Roses"},{"date":"2026-08-20","start":"18:00","end":"","location":"Plaça del Folk","title":"Taller de música gallega amb Namorala Pandereteiras"},{"date":"2026-08-20","start":"19:00","end":"","location":"Plaça del Raspall","title":"Ball de bot (continuació)"},{"date":"2026-08-20","start":"21:00","end":"","location":"Carrer La Perla","title":"Trivial eròtic amb l'Amantis"},{"date":"2026-08-20","start":"22:00","end":"","location":"Fraternitat de Baix","title":"Sopar de gala"},{"date":"2026-08-20","start":"22:00","end":"","location":"Plaça del Raspall","title":"Bum Titis (folk)"},{"date":"2026-08-20","start":"22:00","end":"","location":"Plaça de les Dones del 36","title":"Concert Big Mama Montse & Captain's Brotherhood"},{"date":"2026-08-20","start":"23:00","end":"","location":"Fraternitat de Dalt","title":"Nit rumbera amb Malas Lenguas"},{"date":"2026-08-21","start":"12:00","end":"14:00","location":"Carrer Mozart","title":"Literatura amb Chris Homet i llibreries Obaga, Nocturama i Finestres"},{"date":"2026-08-21","start":"12:00","end":"","location":"Plaça del Raspall","title":"Vermut, música i ambient"},{"date":"2026-08-21","start":"15:45","end":"","location":"Plaça d'en Joanic","title":"Gimcana Festa Major. Homenatge al centenari de Gaudí"},{"date":"2026-08-21","start":"21:30","end":"","location":"Plaça de la Vila","title":"Correfoc adult"},{"date":"2026-08-21","start":"23:00","end":"","location":"Joan Blanques de Baix de Tot","title":"Nit de rock blues amb Blusnet"}];
 
 let activities=[];
@@ -25,7 +26,7 @@ let category='all';
 let tab='program';
 let query='';
 let saved=new Set(JSON.parse(localStorage.getItem('festigracia-saved')||'[]'));
-let done=new Set(JSON.parse(localStorage.getItem('festigracia-done')||'[]'));
+let done=new Set(JSON.parse(localStorage.getItem(DONE_LOCAL_KEY)||'[]'));
 let nearMode=false;
 let userCoords=null;
 let deferredPrompt=null;
@@ -74,7 +75,7 @@ function isPastEvent(e){return new Date()>eventDateTime(e,'end')}
 function isEventNow(e){const n=new Date();return n>=eventDateTime(e,'start')&&n<=eventDateTime(e,'end')}
 function isNextTwoHours(e){const n=new Date(),s=eventDateTime(e,'start');return s>=n&&s<=new Date(n.getTime()+120*60000)}
 function isUpcomingToday(e){return e.date===festivalDayISO()&&!isPastEvent(e)}
-function persistState(){localStorage.setItem('festigracia-saved',JSON.stringify([...saved]));localStorage.setItem('festigracia-done',JSON.stringify([...done]))}
+function persistState(){localStorage.setItem('festigracia-saved',JSON.stringify([...saved]));localStorage.setItem(DONE_LOCAL_KEY,JSON.stringify([...done]))}
 
 function renderDays(){
   const nav=$('#dateNav');nav.innerHTML='';
@@ -186,37 +187,28 @@ async function fetchCloudState(){
   const r=await fetch(url,{headers:authHeaders()});if(!r.ok)throw new Error('cloud fetch');
   const rows=await r.json();
   const cloudSaved=new Set(),cloudDone=new Set();
-  let seedApplied=false,doneRepairApplied=false;
+  let seedApplied=false;
 
   rows.forEach(x=>{
     const k=x.activity_id||'';
     if(k===YELLOW_SEED_MARKER){seedApplied=true;return}
-    if(k===DONE_REPAIR_MARKER){doneRepairApplied=true;return}
-    if(k.startsWith(DONE_PREFIX))cloudDone.add(k.slice(DONE_PREFIX.length));
-    else if(!k.startsWith('__'))cloudSaved.add(k);
+    // v7: ignore forever the legacy done:* keys polluted by v5/v6.
+    if(k.startsWith(LEGACY_DONE_PREFIX))return;
+    if(k.startsWith(DONE_PREFIX)){cloudDone.add(k.slice(DONE_PREFIX.length));return}
+    if(!k.startsWith('__'))cloudSaved.add(k);
   });
 
-  // v6 repair: the previous release could leave the shared DONE state polluted.
-  // On the first v6 load, clear all shared/local DONE entries, preserve favorites,
-  // and restore the yellow-highlighted activities as favorites.
-  if(!doneRepairApplied){
-    rows.forEach(x=>{const k=x.activity_id||'';if(k.startsWith(DONE_PREFIX))queueOp(k,'delete')});
-    cloudDone.clear();
-    done.clear();
-    resolveYellowSeedIds().forEach(id=>{cloudSaved.add(id);queueOp(id,'add')});
-    queueOp(DONE_REPAIR_MARKER,'add');
-    seedApplied=true;
-  }
-
-  if(!localStorage.getItem(STATE_MIGRATION_KEY)){
-    [...saved].forEach(id=>{cloudSaved.add(id);queueOp(id,'add')});
-    // Do not migrate legacy local DONE data after the v6 repair.
-    localStorage.setItem(STATE_MIGRATION_KEY,'1');
-  }
-
+  // Force a fresh one-time seed under yellow-docx-v2. This restores the
+  // highlighted DOCX activities to El meu pla even if v5 deleted favorites.
   if(!seedApplied){
     resolveYellowSeedIds().forEach(id=>{if(!cloudDone.has(id)){cloudSaved.add(id);queueOp(id,'add')}});
     queueOp(YELLOW_SEED_MARKER,'add');
+  }
+
+  // Keep pre-existing local favorites, but never migrate the polluted old DONE set.
+  if(!localStorage.getItem(STATE_MIGRATION_KEY)){
+    [...saved].forEach(id=>{if(!cloudDone.has(id)){cloudSaved.add(id);queueOp(id,'add')}});
+    localStorage.setItem(STATE_MIGRATION_KEY,'1');
   }
 
   saved=cloudSaved;done=cloudDone;
