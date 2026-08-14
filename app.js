@@ -181,7 +181,15 @@ function queueOp(remoteKey,op){const p=pendingOps();p[remoteKey]=op;localStorage
 function authHeaders(extra={}){return {'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,...extra}}
 async function cloudAdd(remoteKey){const r=await fetch(FAVORITES_API,{method:'POST',headers:authHeaders({'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'}),body:JSON.stringify({group_id:GROUP_ID,activity_id:remoteKey})});if(!r.ok)throw new Error('cloud add')}
 async function cloudDelete(remoteKey){const url=`${FAVORITES_API}?group_id=eq.${encodeURIComponent(GROUP_ID)}&activity_id=eq.${encodeURIComponent(remoteKey)}`;const r=await fetch(url,{method:'DELETE',headers:authHeaders()});if(!r.ok)throw new Error('cloud delete')}
-async function flushPending(){if(!navigator.onLine)return;const p=pendingOps();for(const [k,op] of Object.entries(p)){try{op==='add'?await cloudAdd(k):await cloudDelete(k);const fresh=pendingOps();delete fresh[k];localStorage.setItem(PENDING_KEY,JSON.stringify(fresh))}catch{break}}}
+async function flushPending(){
+  if(!navigator.onLine)return;
+  const p=pendingOps();
+  // Do not remove an operation merely because the write request succeeded.
+  // It stays pending until a subsequent cloud read confirms the requested state.
+  for(const [k,op] of Object.entries(p)){
+    try{op==='add'?await cloudAdd(k):await cloudDelete(k)}catch{break}
+  }
+}}
 async function fetchCloudState(){
   const url=`${FAVORITES_API}?select=activity_id&group_id=eq.${encodeURIComponent(GROUP_ID)}`;
   const r=await fetch(url,{headers:authHeaders()});if(!r.ok)throw new Error('cloud fetch');
@@ -189,14 +197,38 @@ async function fetchCloudState(){
   const cloudSaved=new Set(),cloudDone=new Set();
   let seedApplied=false;
 
+  const rawKeys=new Set();
   rows.forEach(x=>{
     const k=x.activity_id||'';
+    rawKeys.add(k);
     if(k===YELLOW_SEED_MARKER){seedApplied=true;return}
-    // v7: ignore forever the legacy done:* keys polluted by v5/v6.
+    // v8: ignore forever the legacy done:* keys polluted by v5/v6.
     if(k.startsWith(LEGACY_DONE_PREFIX))return;
     if(k.startsWith(DONE_PREFIX)){cloudDone.add(k.slice(DONE_PREFIX.length));return}
     if(!k.startsWith('__'))cloudSaved.add(k);
   });
+
+  // Optimistic-sync overlay: never let a stale cloud read undo a recent local action.
+  // Pending operations remain authoritative until the cloud read confirms them.
+  const pending=pendingOps();
+  for(const [k,op] of Object.entries(pending)){
+    if(k.startsWith(DONE_PREFIX)){
+      const id=k.slice(DONE_PREFIX.length);
+      if(op==='add'){cloudDone.add(id);cloudSaved.delete(id)}
+      else cloudDone.delete(id);
+    }else if(!k.startsWith('__')){
+      if(op==='add'&&!cloudDone.has(k))cloudSaved.add(k);
+      else if(op==='delete')cloudSaved.delete(k);
+    }
+  }
+
+  // Remove only operations whose requested state is now confirmed by the server.
+  const remaining={...pending};
+  for(const [k,op] of Object.entries(pending)){
+    const confirmed=op==='add'?rawKeys.has(k):!rawKeys.has(k);
+    if(confirmed)delete remaining[k];
+  }
+  localStorage.setItem(PENDING_KEY,JSON.stringify(remaining));
 
   // Force a fresh one-time seed under yellow-docx-v2. This restores the
   // highlighted DOCX activities to El meu pla even if v5 deleted favorites.
@@ -242,7 +274,7 @@ async function boot(){
   window.addEventListener('online',refreshCloud);
   window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').hidden=false});
   $('#installBtn').onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').hidden=true};
-  refreshCloud();setInterval(refreshCloud,5000);
+  refreshCloud();setInterval(refreshCloud,10000);
   setInterval(()=>{const d=festivalDayISO();if(d!==lastFestivalDay){lastFestivalDay=d;if(tab==='program')selectedDate=defaultDate();render()}else render()},60000);
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js')
 }

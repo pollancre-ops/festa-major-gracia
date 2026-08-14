@@ -1,4 +1,4 @@
-# FestiGràcia v7
+# FestiGràcia v8
 
 Actualització de la web app de la Festa Major de Gràcia 2026.
 
