@@ -1,11 +1,18 @@
 {
-  "name": "FestiGràcia 2026",
+  "name": "FestiGràcia",
   "short_name": "FestiGràcia",
-  "description": "Programa, agenda compartida i registre d'activitats de la Festa Major de Gràcia 2026.",
+  "lang": "ca",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f6f0df",
   "theme_color": "#f4d03f",
-  "lang": "ca",
-  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "description": "Agenda mòbil de la Festa Major de Gràcia 2026",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
