@@ -1,21 +1,42 @@
-# FestiGràcia v3
+# FestiGràcia v5
 
-Versió preparada per GitHub Pages amb favorits compartits via Supabase.
+Actualització de la web app de la Festa Major de Gràcia 2026.
 
-## Novetats
-- Nova vista **Totes**.
-- **Explora** busca automàticament a tots els dies encara disponibles.
-- Cada activitat mostra la seva **data**.
-- Cada categoria té un **emoji propi**.
-- Els **dies passats desapareixen** del selector, de Totes, de la cerca i d'El nostre pla.
-- La jornada canvia a les **05:00**, de manera que les activitats de matinada segueixen pertanyent al dia anterior.
-- Favorits compartits entre els dos dispositius amb el grup `gracia26-x7k9`.
-- Sincronització de favorits cada 5 segons i suport offline.
+## Selecció inicial
 
-## Publicació
-Substitueix tots els fitxers del repositori de GitHub pels d'aquesta carpeta, o com a mínim:
-- app.js
-- style.css
-- sw.js
+- Les **110 activitats ressaltades en groc** al document `GRACIA (1)(1).docx` s'afegeixen automàticament a **El meu pla**.
+- Aquesta càrrega inicial es fa una sola vegada per al grup compartit i després els cors es poden afegir o treure normalment.
+- Les activitats marcades com a **Ja hem fet** no es tornen a afegir al pla.
 
-La URL pública de GitHub Pages no canvia quan actualitzes els fitxers.
+
+## Canvis principals
+
+- Navegació inferior: **Programa · El meu pla · Ja hem fet**.
+- Check `✓` disponible a totes les activitats.
+- En marcar una activitat com a feta:
+  - surt d'**El meu pla**;
+  - passa a **Ja hem fet**;
+  - es conserva encara que la data ja hagi passat.
+- Les activitats passades desapareixen del **Programa** i d'**El meu pla**, però no de **Ja hem fet**.
+- Estat **ARA** per activitats que estan en curs.
+- **El meu pla** funciona com una agenda cronològica agrupada per dia.
+- Avís visual quan dues activitats guardades se solapen.
+- Data compacta sota l'hora: `DV 14`, `DS 15`, etc.
+- El check i el cor són accions independents i visualment separades.
+- La sincronització compartida es manté utilitzant el mateix backend. L'estat de “Ja hem fet” es desa amb un identificador separat.
+
+## IMPORTANT abans de pujar a GitHub
+
+`activities.json` **NO està inclòs en aquest paquet perquè no canvia**. Mantén al repositori el fitxer `activities.json` que ja tens, amb totes les activitats.
+
+Puja/substitueix aquests fitxers:
+
+- `index.html`
+- `style.css`
+- `app.js`
+- `sw.js`
+- `manifest.json`
+- `icon.svg`
+- `README.md`
+
+No eliminis `activities.json`.

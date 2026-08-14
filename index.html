@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f4d03f">
-  <meta name="description" content="FestiGràcia: consulta ràpida de les activitats de la Festa Major de Gràcia 2026.">
+  <meta name="description" content="FestiGràcia: consulta, planifica i registra les activitats de la Festa Major de Gràcia 2026.">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
@@ -31,19 +31,31 @@
   <section id="eventList" class="event-list"></section>
 </main>
 <nav class="bottom-nav">
-  <button class="bottom active" data-tab="today"><span>◉</span>Ara</button>
-  <button class="bottom" data-tab="explore"><span>⌕</span>Explora</button>
+  <button class="bottom active" data-tab="program"><span>◉</span>Programa</button>
   <button class="bottom" data-tab="saved"><span>♡</span>El meu pla <b id="savedCount"></b></button>
+  <button class="bottom" data-tab="done"><span>✓</span>Ja hem fet <b id="doneCount"></b></button>
 </nav>
 <template id="eventTemplate">
 <article class="event-card">
-  <div class="time-col"><strong class="event-time"></strong><small class="event-end"></small></div>
+  <div class="time-col">
+    <strong class="event-time"></strong>
+    <small class="event-end"></small>
+    <span class="event-date"></span>
+  </div>
   <div class="event-main">
-    <div class="event-meta"><span class="category-pill"></span><span class="recurring-mark" hidden>cada dia</span></div>
+    <div class="event-meta">
+      <span class="category-pill"></span>
+      <span class="now-mark" hidden>ARA</span>
+      <span class="conflict-mark" hidden>⚠ SOLAPAMENT</span>
+      <span class="recurring-mark" hidden>cada dia</span>
+    </div>
     <h3 class="event-title"></h3><p class="event-location"></p>
     <div class="event-actions"><a class="map-link" target="_blank" rel="noopener">Veure al mapa ↗</a><span class="distance"></span></div>
   </div>
-  <button class="save-btn" aria-label="Desa l'activitat">♡</button>
+  <div class="card-actions">
+    <button class="save-btn" aria-label="Afegeix a El meu pla">♡</button>
+    <button class="done-btn" aria-label="Marca com a feta">✓</button>
+  </div>
 </article>
 </template>
 <script src="app.js" defer></script>
