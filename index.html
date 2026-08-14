@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4d03f">
+  <meta name="description" content="FestiGràcia: consulta, planifica i registra les activitats de la Festa Major de Gràcia 2026.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <title>FestiGràcia</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand-wrap"><span class="burst">✺</span><div><h1>FestiGràcia</h1><p>Festa Major de Gràcia · 2026</p></div></div>
+  <button id="installBtn" class="icon-btn" hidden>Instal·la</button>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-stamp">14—21<br>AGOST</div>
+    <div><p class="eyebrow">QUÈ PASSA ARA?</p><h2 id="heroTitle">Troba el teu pla en tres segons.</h2></div>
+  </section>
+  <div class="search-wrap"><label class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Cerca activitat, artista o carrer…" autocomplete="off"></label></div>
+  <nav id="dateNav" class="date-nav"></nav>
+  <section class="toolbar">
+    <div class="segmented"><button class="seg active" data-view="now">Ara</button><button class="seg" data-view="all">Tot el dia</button></div>
+    <button id="nearBtn" class="near-btn">◎ A prop meu</button>
+  </section>
+  <section id="filters" class="filters"></section>
+  <div id="status" class="status" aria-live="polite"></div>
+  <section id="eventList" class="event-list"></section>
+</main>
+<nav class="bottom-nav">
+  <button class="bottom active" data-tab="program"><span>◉</span>Programa</button>
+  <button class="bottom" data-tab="saved"><span>♡</span>El meu pla <b id="savedCount"></b></button>
+  <button class="bottom" data-tab="done"><span>✓</span>Ja hem fet <b id="doneCount"></b></button>
+</nav>
+<template id="eventTemplate">
+<article class="event-card">
+  <div class="time-col">
+    <strong class="event-time"></strong>
+    <small class="event-end"></small>
+    <span class="event-date"></span>
+  </div>
+  <div class="event-main">
+    <div class="event-meta">
+      <span class="category-pill"></span>
+      <span class="now-mark" hidden>ARA</span>
+      <span class="conflict-mark" hidden>⚠ SOLAPAMENT</span>
+      <span class="recurring-mark" hidden>cada dia</span>
+    </div>
+    <h3 class="event-title"></h3><p class="event-location"></p>
+    <div class="event-actions"><a class="map-link" target="_blank" rel="noopener">Veure al mapa ↗</a><span class="distance"></span></div>
+  </div>
+  <div class="card-actions">
+    <button class="save-btn" aria-label="Afegeix a El meu pla">♡</button>
+    <button class="done-btn" aria-label="Marca com a feta">✓</button>
+  </div>
+</article>
+</template>
+<script src="app.js" defer></script>
+</body></html>
