@@ -1,6 +1,6 @@
-# FestiGràcia v10
+# FestiGràcia v11
 
-Reconstrucció neta a partir de la v3 estable.
+Basada directament en la v10 estable, conservant-ne totes les funcionalitats i l’estat compartit.
 
 ## Canvis
 - Navegació: **Programa · El meu pla · Ja hem fet**.
@@ -20,3 +20,10 @@ Reconstrucció neta a partir de la v3 estable.
 Substitueix **tots els fitxers** del repositori pels d'aquest paquet. En aquesta versió també s'inclou `activities.json`, així que no cal conservar-ne cap fitxer de versions anteriors.
 
 Després de publicar, fes una recàrrega forçada (`Cmd + Shift + R`) una vegada.
+
+
+## Afegit a v11: analítica anònima
+- Registra una visita per sessió de pestanya a la taula `visits` de Supabase.
+- Desa `visitor_id` anònim persistent, dispositiu/navegador aproximat i URL.
+- No registra noms, correus ni identitat real.
+- Manté sense canvis el grup compartit `gracia26-clean-v10`, per no perdre els favorits ni els elements de “Ja hem fet”.

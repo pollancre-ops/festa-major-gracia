@@ -12,6 +12,9 @@ const SUPABASE_URL='https://girfbvvetgpisigzvvsy.supabase.co';
 const SUPABASE_KEY='sb_publishable_vYvy1hWUDtc0ltmYvCbcqA_ohekPQSn';
 const GROUP_ID='gracia26-clean-v10';
 const API=`${SUPABASE_URL}/rest/v1/favorites`;
+const VISITS_API=`${SUPABASE_URL}/rest/v1/visits`;
+const VISITOR_KEY='festigracia-visitor-id';
+const VISIT_SESSION_KEY='festigracia-visit-logged-v11';
 const LOCAL_KEY=`festigracia-v10-state-${GROUP_ID}`;
 const PENDING_KEY=`festigracia-v10-pending-${GROUP_ID}`;
 const SEEDED_MARKER='meta:seeded-v10';
@@ -120,6 +123,39 @@ function render(){
 }
 function updateCounts(){const av=new Set(availableDays());const plan=activities.filter(e=>av.has(e.date)&&saved.has(e.id)&&!done.has(e.id)).length;const finished=activities.filter(e=>done.has(e.id)).length;$('#savedCount').textContent=plan||'';$('#doneCount').textContent=finished||'';}
 
+// ── Analítica anònima de visites ────────────────────────────────────────
+function getVisitorId(){
+  let id=localStorage.getItem(VISITOR_KEY);
+  if(!id){
+    id=(crypto?.randomUUID?.()||`v-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    localStorage.setItem(VISITOR_KEY,id);
+  }
+  return id;
+}
+function deviceLabel(){
+  const ua=navigator.userAgent||'';
+  let device=/iPad/i.test(ua)?'iPad':/iPhone/i.test(ua)?'iPhone':/Android/i.test(ua)?'Android':/Macintosh|Mac OS X/i.test(ua)?'Mac':/Windows/i.test(ua)?'Windows':'Altres';
+  let browser=/Edg\//i.test(ua)?'Edge':/CriOS|Chrome\//i.test(ua)?'Chrome':/FxiOS|Firefox\//i.test(ua)?'Firefox':/Safari\//i.test(ua)?'Safari':'Navegador';
+  return `${device} · ${browser}`;
+}
+async function logVisit(){
+  // Una fila per sessió de pestanya, no una fila per cada recàrrega/renderitzat.
+  if(sessionStorage.getItem(VISIT_SESSION_KEY)==='1'||!navigator.onLine)return;
+  try{
+    const r=await fetch(VISITS_API,{
+      method:'POST',
+      headers:cloudHeaders({'Content-Type':'application/json','Prefer':'return=minimal'}),
+      body:JSON.stringify({
+        visitor_id:getVisitorId(),
+        device:deviceLabel(),
+        page_url:location.href.split('#')[0]
+      })
+    });
+    if(!r.ok)throw new Error(`VISIT ${r.status}`);
+    sessionStorage.setItem(VISIT_SESSION_KEY,'1');
+  }catch(e){console.warn('No s’ha pogut registrar la visita',e);}
+}
+
 // ── Sincronització segura ─────────────────────────────────────────────
 function cloudHeaders(extra={}){return {'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,...extra};}
 function encodeFav(id){return `fav:${id}`;}function encodeDone(id){return `done:${id}`;}
@@ -149,8 +185,9 @@ function nearMe(){if(!navigator.geolocation){status.textContent='Aquest navegado
 
 async function boot(){
   restoreLocal();
-  const r=await fetch('activities.json?v=10.0.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
+  const r=await fetch('activities.json?v=11.0.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
   renderDays();renderFilters();render();
+  logVisit();
   $('#searchInput').oninput=e=>{query=e.target.value.trim();render();};
   document.querySelectorAll('.seg').forEach(b=>b.onclick=()=>{view=b.dataset.view;document.querySelectorAll('.seg').forEach(x=>x.classList.toggle('active',x===b));render();});
   $('#nearBtn').onclick=nearMe;
@@ -158,9 +195,9 @@ async function boot(){
 
   try{await bulkSeed();await pullCloud({silent:false});}catch(e){console.warn('Inici en mode local',e);if(!saved.size&&!done.size){saved=new Set(INITIAL_FAVORITES);persistLocal();render();}}
   setInterval(()=>pullCloud({silent:true}),15000);
-  window.addEventListener('online',()=>pullCloud({silent:false}));
+  window.addEventListener('online',()=>{pullCloud({silent:false});logVisit();});
   setInterval(()=>{const current=festivalDayISO();if(current!==lastFestivalDay){lastFestivalDay=current;normalizeSelectedDate();renderDays();render();}},60000);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=10.0.0').catch(()=>{});
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=11.0.0').catch(()=>{});
 }
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').hidden=false;});
 $('#installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').hidden=true;}};
