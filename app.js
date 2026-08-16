@@ -10,13 +10,20 @@ const INITIAL_FAVORITES=new Set(["e0046","e0056","e0063","e0064","e0065","e0080"
 // Espai compartit nou i net: no hereta els estats corruptes de les versions de prova.
 const SUPABASE_URL='https://girfbvvetgpisigzvvsy.supabase.co';
 const SUPABASE_KEY='sb_publishable_vYvy1hWUDtc0ltmYvCbcqA_ohekPQSn';
-const GROUP_ID='gracia26-clean-v10';
+const PRIVATE_GROUP_ID='gracia26-clean-v10';
+const requestedGroup=new URLSearchParams(location.search).get('group');
+// Només l'enllaç privat exacte activa la sincronització compartida.
+// Qualsevol altre enllaç (inclòs el públic sense paràmetres) treballa només en local.
+const IS_PRIVATE=requestedGroup===PRIVATE_GROUP_ID;
+const GROUP_ID=IS_PRIVATE?PRIVATE_GROUP_ID:null;
 const API=`${SUPABASE_URL}/rest/v1/favorites`;
 const VISITS_API=`${SUPABASE_URL}/rest/v1/visits`;
 const VISITOR_KEY='festigracia-visitor-id';
-const VISIT_SESSION_KEY='festigracia-visit-logged-v11';
-const LOCAL_KEY=`festigracia-v10-state-${GROUP_ID}`;
-const PENDING_KEY=`festigracia-v10-pending-${GROUP_ID}`;
+const VISIT_SESSION_KEY='festigracia-visit-logged-v12';
+// El privat conserva exactament les claus locals de v10/v11 per no perdre cap còpia pendent.
+// El públic usa un espai local nou i net, independent a cada navegador.
+const LOCAL_KEY=IS_PRIVATE?`festigracia-v10-state-${PRIVATE_GROUP_ID}`:'festigracia-v12-public-state';
+const PENDING_KEY=IS_PRIVATE?`festigracia-v10-pending-${PRIVATE_GROUP_ID}`:null;
 const SEEDED_MARKER='meta:seeded-v10';
 
 let activities=[];
@@ -108,8 +115,8 @@ function render(){
   $('#programToolbar').hidden=tab!=='program';
   const a=baseFiltered();const conflicts=tab==='saved'?conflictIds(a):new Set();
   if(tab==='program'){$('#heroEyebrow').textContent='PROGRAMA';$('#heroTitle').textContent=selectedDate==='all'?'Tota la Festa Major, en una sola vista.':'Tot el que passa aquest dia.';}
-  if(tab==='saved'){$('#heroEyebrow').textContent='EL MEU PLA';$('#heroTitle').textContent='La vostra agenda compartida.';}
-  if(tab==='done'){$('#heroEyebrow').textContent='JA HEM FET';$('#heroTitle').textContent='Els plans que ja heu viscut.';}
+  if(tab==='saved'){$('#heroEyebrow').textContent='EL MEU PLA';$('#heroTitle').textContent=IS_PRIVATE?'La vostra agenda compartida.':'La teva agenda.';}
+  if(tab==='done'){$('#heroEyebrow').textContent='JA HEM FET';$('#heroTitle').textContent=IS_PRIVATE?'Els plans que ja heu viscut.':'Els plans que ja has viscut.';}
 
   if(tab==='program'&&view==='now'){
     const cur=a.filter(currentMatch),up=a.filter(e=>!cur.includes(e)&&upcomingMatch(e));addSection('Ara',cur,conflicts);addSection('A continuació · 2 h',up,conflicts);
@@ -164,19 +171,19 @@ function writePending(p){localStorage.setItem(PENDING_KEY,JSON.stringify(p));}
 function queueCloud(key,op){const p=readPending();p[key]=op;writePending(p);}
 function persistLocal(){localStorage.setItem(LOCAL_KEY,JSON.stringify({saved:[...saved],done:[...done]}));}
 function restoreLocal(){try{const x=JSON.parse(localStorage.getItem(LOCAL_KEY)||'{}');saved=new Set(x.saved||[]);done=new Set(x.done||[]);}catch{saved=new Set();done=new Set();}}
-async function cloudRows(){const u=`${API}?group_id=eq.${encodeURIComponent(GROUP_ID)}&select=activity_id`;const r=await fetch(u,{headers:cloudHeaders(),cache:'no-store'});if(!r.ok)throw new Error(`GET ${r.status}`);return r.json();}
-async function cloudAdd(key){const r=await fetch(API,{method:'POST',headers:cloudHeaders({'Content-Type':'application/json','Prefer':'return=minimal'}),body:JSON.stringify({group_id:GROUP_ID,activity_id:key})});if(!r.ok&&r.status!==409)throw new Error(`POST ${r.status}`);}
-async function cloudDelete(key){const u=`${API}?group_id=eq.${encodeURIComponent(GROUP_ID)}&activity_id=eq.${encodeURIComponent(key)}`;const r=await fetch(u,{method:'DELETE',headers:cloudHeaders({'Prefer':'return=minimal'})});if(!r.ok)throw new Error(`DELETE ${r.status}`);}
-async function bulkSeed(){const rows=await cloudRows();if(rows.some(x=>x.activity_id===SEEDED_MARKER))return;const payload=[{group_id:GROUP_ID,activity_id:SEEDED_MARKER},...[...INITIAL_FAVORITES].map(id=>({group_id:GROUP_ID,activity_id:encodeFav(id)}))];const r=await fetch(API,{method:'POST',headers:cloudHeaders({'Content-Type':'application/json','Prefer':'return=minimal'}),body:JSON.stringify(payload)});if(!r.ok&&r.status!==409)throw new Error(`SEED ${r.status}`);}
-async function flushPending(){if(!navigator.onLine)return false;const entries=Object.entries(readPending());for(const [key,op] of entries){try{if(op==='add')await cloudAdd(key);else await cloudDelete(key);const latest=readPending();if(latest[key]===op){delete latest[key];writePending(latest);}}catch(e){console.warn('Sync pendent',key,e);return false;}}return true;}
+async function cloudRows(){if(!IS_PRIVATE)return [];const u=`${API}?group_id=eq.${encodeURIComponent(GROUP_ID)}&select=activity_id`;const r=await fetch(u,{headers:cloudHeaders(),cache:'no-store'});if(!r.ok)throw new Error(`GET ${r.status}`);return r.json();}
+async function cloudAdd(key){if(!IS_PRIVATE)return;const r=await fetch(API,{method:'POST',headers:cloudHeaders({'Content-Type':'application/json','Prefer':'return=minimal'}),body:JSON.stringify({group_id:GROUP_ID,activity_id:key})});if(!r.ok&&r.status!==409)throw new Error(`POST ${r.status}`);}
+async function cloudDelete(key){if(!IS_PRIVATE)return;const u=`${API}?group_id=eq.${encodeURIComponent(GROUP_ID)}&activity_id=eq.${encodeURIComponent(key)}`;const r=await fetch(u,{method:'DELETE',headers:cloudHeaders({'Prefer':'return=minimal'})});if(!r.ok)throw new Error(`DELETE ${r.status}`);}
+async function bulkSeed(){if(!IS_PRIVATE)return;const rows=await cloudRows();if(rows.some(x=>x.activity_id===SEEDED_MARKER))return;const payload=[{group_id:GROUP_ID,activity_id:SEEDED_MARKER},...[...INITIAL_FAVORITES].map(id=>({group_id:GROUP_ID,activity_id:encodeFav(id)}))];const r=await fetch(API,{method:'POST',headers:cloudHeaders({'Content-Type':'application/json','Prefer':'return=minimal'}),body:JSON.stringify(payload)});if(!r.ok&&r.status!==409)throw new Error(`SEED ${r.status}`);}
+async function flushPending(){if(!IS_PRIVATE)return true;if(!navigator.onLine)return false;const entries=Object.entries(readPending());for(const [key,op] of entries){try{if(op==='add')await cloudAdd(key);else await cloudDelete(key);const latest=readPending();if(latest[key]===op){delete latest[key];writePending(latest);}}catch(e){console.warn('Sync pendent',key,e);return false;}}return true;}
 function applyPending(remoteSaved,remoteDone){const p=readPending();for(const [key,op] of Object.entries(p)){const fav=key.startsWith('fav:'),id=key.slice(key.indexOf(':')+1);const set=fav?remoteSaved:remoteDone;if(op==='add')set.add(id);else set.delete(id);}return [remoteSaved,remoteDone];}
 async function pullCloud({silent=true}={}){
-  if(!navigator.onLine)return;
+  if(!IS_PRIVATE||!navigator.onLine)return;
   try{await flushPending();const rows=await cloudRows();const valid=new Set(activities.map(e=>e.id));let rs=new Set(),rd=new Set();for(const x of rows){const k=x.activity_id;if(k.startsWith('fav:')&&valid.has(k.slice(4)))rs.add(k.slice(4));if(k.startsWith('done:')&&valid.has(k.slice(5)))rd.add(k.slice(5));}[rs,rd]=applyPending(rs,rd);saved=rs;done=rd;persistLocal();render();if(!silent){status.textContent='Pla compartit sincronitzat ✓';setTimeout(()=>{if(status.textContent.includes('sincronitzat'))status.textContent='';},1200);}}
   catch(e){console.warn('Supabase no disponible',e);if(!silent)status.textContent='Treballant amb la còpia local. Se sincronitzarà automàticament.';}
 }
-async function toggleFavorite(id){const adding=!saved.has(id);if(adding)saved.add(id);else saved.delete(id);persistLocal();queueCloud(encodeFav(id),adding?'add':'delete');render();await flushPending();}
-async function toggleDone(id){const adding=!done.has(id);if(adding){done.add(id);if(saved.has(id)){saved.delete(id);queueCloud(encodeFav(id),'delete');}}else done.delete(id);persistLocal();queueCloud(encodeDone(id),adding?'add':'delete');render();await flushPending();}
+async function toggleFavorite(id){const adding=!saved.has(id);if(adding)saved.add(id);else saved.delete(id);persistLocal();if(IS_PRIVATE){queueCloud(encodeFav(id),adding?'add':'delete');await flushPending();}render();}
+async function toggleDone(id){const adding=!done.has(id);if(adding){done.add(id);if(saved.has(id)){saved.delete(id);if(IS_PRIVATE)queueCloud(encodeFav(id),'delete');}}else done.delete(id);persistLocal();if(IS_PRIVATE){queueCloud(encodeDone(id),adding?'add':'delete');await flushPending();}render();}
 
 function hav(a,b,c,d){const R=6371000,r=x=>x*Math.PI/180;const dp=r(c-a),dl=r(d-b),q=Math.sin(dp/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.sqrt(q));}
 async function geocode(loc){const k='fg-geo-'+loc,c=localStorage.getItem(k);if(c)return JSON.parse(c);const u='https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=es&q='+encodeURIComponent(loc+', Gràcia, Barcelona');const r=await fetch(u,{headers:{'Accept-Language':'ca'}});if(!r.ok)throw 0;const j=await r.json(),v=j[0]?{lat:+j[0].lat,lon:+j[0].lon}:null;if(v)localStorage.setItem(k,JSON.stringify(v));return v;}
@@ -185,7 +192,7 @@ function nearMe(){if(!navigator.geolocation){status.textContent='Aquest navegado
 
 async function boot(){
   restoreLocal();
-  const r=await fetch('activities.json?v=11.0.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
+  const r=await fetch('activities.json?v=12.0.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
   renderDays();renderFilters();render();
   logVisit();
   $('#searchInput').oninput=e=>{query=e.target.value.trim();render();};
@@ -193,11 +200,14 @@ async function boot(){
   $('#nearBtn').onclick=nearMe;
   document.querySelectorAll('.bottom').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('.bottom').forEach(x=>x.classList.toggle('active',x===b));selectedDate=tab==='program'?defaultDate():'all';view='all';nearMode=false;$('#nearBtn').classList.remove('active');document.querySelectorAll('.seg').forEach(x=>x.classList.toggle('active',x.dataset.view==='all'));renderDays();render();});
 
-  try{await bulkSeed();await pullCloud({silent:false});}catch(e){console.warn('Inici en mode local',e);if(!saved.size&&!done.size){saved=new Set(INITIAL_FAVORITES);persistLocal();render();}}
-  setInterval(()=>pullCloud({silent:true}),15000);
-  window.addEventListener('online',()=>{pullCloud({silent:false});logVisit();});
+  if(IS_PRIVATE){
+    try{await bulkSeed();await pullCloud({silent:false});}
+    catch(e){console.warn('Inici privat amb còpia local',e);if(!saved.size&&!done.size){saved=new Set(INITIAL_FAVORITES);persistLocal();render();}}
+    setInterval(()=>pullCloud({silent:true}),15000);
+  }
+  window.addEventListener('online',()=>{if(IS_PRIVATE)pullCloud({silent:false});logVisit();});
   setInterval(()=>{const current=festivalDayISO();if(current!==lastFestivalDay){lastFestivalDay=current;normalizeSelectedDate();renderDays();render();}},60000);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=11.0.0').catch(()=>{});
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=12.0.0').catch(()=>{});
 }
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').hidden=false;});
 $('#installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').hidden=true;}};

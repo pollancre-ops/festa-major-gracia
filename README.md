@@ -1,4 +1,4 @@
-# FestiGràcia v11
+# FestiGràcia v12
 
 Basada directament en la v10 estable, conservant-ne totes les funcionalitats i l’estat compartit.
 
@@ -27,3 +27,11 @@ Després de publicar, fes una recàrrega forçada (`Cmd + Shift + R`) una vegada
 - Desa `visitor_id` anònim persistent, dispositiu/navegador aproximat i URL.
 - No registra noms, correus ni identitat real.
 - Manté sense canvis el grup compartit `gracia26-clean-v10`, per no perdre els favorits ni els elements de “Ja hem fet”.
+
+
+## Mode públic i mode privat (v12)
+
+- URL pública (`https://pollancre-ops.github.io/festa-major-gracia/`): favorits i activitats fetes només a `localStorage`, independents per navegador. Comença neta i no carrega les 110 preseleccions.
+- URL privada (`https://pollancre-ops.github.io/festa-major-gracia/?group=gracia26-clean-v10`): conserva el grup compartit `gracia26-clean-v10` a Supabase, les 110 preseleccions i la sincronització entre dispositius.
+- Les visites continuen registrant-se a Supabase en tots dos modes. El camp `page_url` permet distingir les visites públiques de les privades.
+- Qualsevol `?group=` diferent del grup privat exacte funciona com a mode públic/local; no crea grups compartits nous.
