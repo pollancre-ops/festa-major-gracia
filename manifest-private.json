@@ -2,7 +2,7 @@
   "name": "FestiGràcia",
   "short_name": "FestiGràcia",
   "lang": "ca",
-  "start_url": "./",
+  "start_url": "./?group=gracia26-clean-v10",
   "display": "standalone",
   "background_color": "#f6f0df",
   "theme_color": "#f4d03f",
@@ -15,6 +15,6 @@
       "purpose": "any maskable"
     }
   ],
-  "id": "./",
+  "id": "./?group=gracia26-clean-v10",
   "scope": "./"
 }

@@ -11,15 +11,30 @@ const INITIAL_FAVORITES=new Set(["e0046","e0056","e0063","e0064","e0065","e0080"
 const SUPABASE_URL='https://girfbvvetgpisigzvvsy.supabase.co';
 const SUPABASE_KEY='sb_publishable_vYvy1hWUDtc0ltmYvCbcqA_ohekPQSn';
 const PRIVATE_GROUP_ID='gracia26-clean-v10';
+const UPDATE_NOTICE_KEY='festigracia-update-notice-v13';
+const PRIVATE_LAUNCH_KEY='festigracia-private-launch-v13';
 const requestedGroup=new URLSearchParams(location.search).get('group');
 // Només l'enllaç privat exacte activa la sincronització compartida.
 // Qualsevol altre enllaç (inclòs el públic sense paràmetres) treballa només en local.
 const IS_PRIVATE=requestedGroup===PRIVATE_GROUP_ID;
 const GROUP_ID=IS_PRIVATE?PRIVATE_GROUP_ID:null;
+
+// Recorda que aquest navegador és el nostre quan s'obre expressament l'enllaç privat.
+// Això ajuda a recuperar el mode privat des d'una icona de pantalla d'inici antiga.
+if(IS_PRIVATE){
+  try{localStorage.setItem(PRIVATE_LAUNCH_KEY,'1');document.cookie=`fg_private_launch_v13=1;path=/;max-age=31536000;SameSite=Lax`;}catch{}
+}else if(!requestedGroup && window.matchMedia?.('(display-mode: standalone)').matches){
+  try{
+    const cookiePrivate=document.cookie.split(';').some(x=>x.trim()==='fg_private_launch_v13=1');
+    if(localStorage.getItem(PRIVATE_LAUNCH_KEY)==='1'||cookiePrivate){
+      location.replace(`./?group=${encodeURIComponent(PRIVATE_GROUP_ID)}`);
+    }
+  }catch{}
+}
 const API=`${SUPABASE_URL}/rest/v1/favorites`;
 const VISITS_API=`${SUPABASE_URL}/rest/v1/visits`;
 const VISITOR_KEY='festigracia-visitor-id';
-const VISIT_SESSION_KEY='festigracia-visit-logged-v12';
+const VISIT_SESSION_KEY='festigracia-visit-logged-v13';
 // El privat conserva exactament les claus locals de v10/v11 per no perdre cap còpia pendent.
 // El públic usa un espai local nou i net, independent a cada navegador.
 const LOCAL_KEY=IS_PRIVATE?`festigracia-v10-state-${PRIVATE_GROUP_ID}`:'festigracia-v12-public-state';
@@ -130,6 +145,22 @@ function render(){
 }
 function updateCounts(){const av=new Set(availableDays());const plan=activities.filter(e=>av.has(e.date)&&saved.has(e.id)&&!done.has(e.id)).length;const finished=activities.filter(e=>done.has(e.id)).length;$('#savedCount').textContent=plan||'';$('#doneCount').textContent=finished||'';}
 
+// ── Avís d'actualització ───────────────────────────────────────────────
+function showUpdateNotice(){
+  try{
+    if(localStorage.getItem(UPDATE_NOTICE_KEY)==='1')return;
+    const modal=$('#updateModal');
+    if(!modal)return;
+    modal.hidden=false;
+    document.body.classList.add('modal-open');
+    $('#updateDismiss').onclick=()=>{
+      localStorage.setItem(UPDATE_NOTICE_KEY,'1');
+      modal.hidden=true;
+      document.body.classList.remove('modal-open');
+    };
+  }catch{}
+}
+
 // ── Analítica anònima de visites ────────────────────────────────────────
 function getVisitorId(){
   let id=localStorage.getItem(VISITOR_KEY);
@@ -192,8 +223,9 @@ function nearMe(){if(!navigator.geolocation){status.textContent='Aquest navegado
 
 async function boot(){
   restoreLocal();
-  const r=await fetch('activities.json?v=12.0.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
+  const r=await fetch('activities.json?v=13.0.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
   renderDays();renderFilters();render();
+  showUpdateNotice();
   logVisit();
   $('#searchInput').oninput=e=>{query=e.target.value.trim();render();};
   document.querySelectorAll('.seg').forEach(b=>b.onclick=()=>{view=b.dataset.view;document.querySelectorAll('.seg').forEach(x=>x.classList.toggle('active',x===b));render();});
@@ -207,7 +239,7 @@ async function boot(){
   }
   window.addEventListener('online',()=>{if(IS_PRIVATE)pullCloud({silent:false});logVisit();});
   setInterval(()=>{const current=festivalDayISO();if(current!==lastFestivalDay){lastFestivalDay=current;normalizeSelectedDate();renderDays();render();}},60000);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=12.0.0').catch(()=>{});
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=13.0.0').catch(()=>{});
 }
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').hidden=false;});
 $('#installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').hidden=true;}};
