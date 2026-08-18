@@ -16,7 +16,7 @@
   })();
   </script>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=13.0.0">
+  <link rel="stylesheet" href="style.css?v=14.3.0">
   <title>FestiGràcia</title>
 </head>
 <body>
@@ -26,9 +26,8 @@
     <span class="update-burst">✺</span>
     <p class="update-kicker">ACTUALITZACIÓ</p>
     <h2 id="updateTitle">Nova versió de FestiGràcia</h2>
-    <p>Hem actualitzat el sistema de favorits.</p>
-    <p>Els likes s’han posat a zero i, a partir d’ara, cada persona tindrà el seu propi pla guardat al dispositiu.</p>
-    <p><strong>Si abans tenies activitats guardades, les hauràs de tornar a marcar.</strong></p>
+    <p>Ara pots consultar els <strong>carrers guarnits</strong> des d’una nova pestanya i marcar-los com a <strong>visitats</strong> per portar-ne el compte.</p>
+    <p class="update-signoff">Atentament,<br><strong>Lara i Miquel ❤️</strong></p>
     <button id="updateDismiss" class="update-dismiss" type="button">Entesos</button>
   </div>
 </div>
@@ -37,7 +36,7 @@
   <button id="installBtn" class="icon-btn" hidden>Instal·la</button>
 </header>
 <main>
-  <section class="hero">
+  <section class="hero" id="heroSection">
     <div class="hero-stamp">14—21<br>AGOST</div>
     <div><p class="eyebrow" id="heroEyebrow">PROGRAMA</p><h2 id="heroTitle">Troba el teu pla en tres segons.</h2></div>
   </section>
@@ -47,14 +46,23 @@
     <div class="segmented"><button class="seg" data-view="now">Ara</button><button class="seg active" data-view="all">Tot el dia</button></div>
     <button id="nearBtn" class="near-btn">◎ A prop meu</button>
   </section>
+  <section id="streetToolbar" class="street-toolbar" hidden>
+    <div class="street-tabs" role="group" aria-label="Filtra els carrers">
+      <button class="street-filter active" type="button" data-street-view="all">Tots</button>
+      <button class="street-filter" type="button" data-street-view="pending">Pendents</button>
+      <button class="street-filter" type="button" data-street-view="visited">Visitats</button>
+    </div>
+    <div id="streetProgress" class="street-progress"></div>
+  </section>
   <section id="filters" class="filters"></section>
   <div id="status" class="status" aria-live="polite"></div>
   <section id="eventList" class="event-list"></section>
 </main>
 <nav class="bottom-nav">
   <button class="bottom active" data-tab="program"><span>☰</span>Programa</button>
+  <button class="bottom" data-tab="streets"><span>⌂</span>Carrers <b id="streetCount"></b></button>
   <button class="bottom" data-tab="saved"><span>♡</span>El meu pla <b id="savedCount"></b></button>
-  <button class="bottom" data-tab="done"><span>✓</span>Ja hem fet <b id="doneCount"></b></button>
+  <button class="bottom" data-tab="done"><span>✓</span>Ja he fet <b id="doneCount"></b></button>
 </nav>
 <template id="eventTemplate">
 <article class="event-card">
@@ -71,9 +79,25 @@
   </div>
   <div class="state-actions">
     <button class="save-btn" aria-label="Afegeix al meu pla" title="El meu pla">♡</button>
-    <button class="done-btn" aria-label="Marca com a feta" title="Ja hem fet">✓</button>
+    <button class="done-btn" aria-label="Marca com a feta" title="Ja he fet">✓</button>
   </div>
 </article>
 </template>
-<script src="app.js?v=13.0.0" defer></script>
+
+<template id="streetTemplate">
+<article class="street-card">
+  <div class="street-copy">
+    <p class="street-kicker">CARRER GUARNIT</p>
+    <h3 class="street-name"></h3>
+    <p class="street-theme"></p>
+    <p class="street-description"></p>
+    <a class="street-map-link" target="_blank" rel="noopener">Veure al mapa ↗</a>
+  </div>
+  <button class="street-visit-btn" type="button" aria-label="Marca com a visitat" aria-pressed="false">
+    <span class="street-check">✓</span>
+    <span class="street-visit-label">Marca visitat</span>
+  </button>
+</article>
+</template>
+<script src="app.js?v=14.3.0" defer></script>
 </body></html>

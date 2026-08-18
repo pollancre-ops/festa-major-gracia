@@ -1,0 +1,140 @@
+[
+  {
+    "id": "berga",
+    "name": "Berga",
+    "theme": "Anem a ca la iaia",
+    "description": "Viatge a la infància"
+  },
+  {
+    "id": "ciudad-real",
+    "name": "Ciudad Real",
+    "theme": "Ens queda la paraula",
+    "description": "Homenatge als poetes represaliats"
+  },
+  {
+    "id": "fraternitat-baix",
+    "name": "Fraternitat de Baix",
+    "theme": "El bosc de Fratergon",
+    "description": "Univers El Senyor dels Anells"
+  },
+  {
+    "id": "fraternitat-dalt",
+    "name": "Fraternitat de Dalt",
+    "theme": "La comarca de Dalt",
+    "description": "Univers El Senyor dels Anells"
+  },
+  {
+    "id": "joan-blanques-baix",
+    "name": "Joan Blanques de Baix",
+    "theme": "Brigada Joan Blanques",
+    "description": "Homenatge al cos de bombers"
+  },
+  {
+    "id": "joan-blanques-baix-tot",
+    "name": "Joan Blanques (Baix de Tot)",
+    "theme": "Un mar de meduses",
+    "description": "Reflexió sobre l'ecosistema marí"
+  },
+  {
+    "id": "la-perla",
+    "name": "La Perla",
+    "theme": "La Perla Negra",
+    "description": "Inspirat en Pirates del Carib"
+  },
+  {
+    "id": "llibertat",
+    "name": "Llibertat",
+    "theme": "Argonath, Aranyerra i Mòrdor",
+    "description": "Univers El Senyor dels Anells"
+  },
+  {
+    "id": "lluis-vives",
+    "name": "Lluís Vives",
+    "theme": "La calçotada",
+    "description": "Una gran taula per a aquest àpat popular"
+  },
+  {
+    "id": "mozart",
+    "name": "Mozart",
+    "theme": "L’hivernacle encantat",
+    "description": "L'umbracle de la Ciutadella fet sala de ball"
+  },
+  {
+    "id": "perill",
+    "name": "Perill",
+    "theme": "Perill en flor",
+    "description": "Homenatge a les floristes de la Rambla i el modernisme"
+  },
+  {
+    "id": "poble-gitano",
+    "name": "Plaça del Poble Gitano",
+    "theme": "Aniversari",
+    "description": "10 anys de l'associació gitana Romanipe’s"
+  },
+  {
+    "id": "placa-vila",
+    "name": "Plaça de la Vila",
+    "theme": "Un guarnit de merda",
+    "description": "Homenatge al sentit escatològic català"
+  },
+  {
+    "id": "placa-nord",
+    "name": "Plaça del Nord",
+    "theme": "El jardí improbable",
+    "description": "Plantes imaginàries i un laberint infantil"
+  },
+  {
+    "id": "rovira-trias",
+    "name": "Plaça de Rovira i Trias",
+    "theme": "Batiscaforoviruskas",
+    "description": "20 anys sense interrupcions i tribut a Antònia Font"
+  },
+  {
+    "id": "sant-miquel",
+    "name": "Placeta de Sant Miquel",
+    "theme": "L’abecedari de la Festa",
+    "description": "Homenatge a l'univers literari"
+  },
+  {
+    "id": "progres",
+    "name": "Progrés",
+    "theme": "Progrés dels Anells",
+    "description": "Univers El Senyor dels Anells"
+  },
+  {
+    "id": "providencia",
+    "name": "Providència",
+    "theme": "Floridència",
+    "description": "L'hivernacle de la Ciutadella ple de color"
+  },
+  {
+    "id": "puigmarti",
+    "name": "Puigmartí",
+    "theme": "Viet Fest",
+    "description": "Festes populars de la cultura vietnamita"
+  },
+  {
+    "id": "sant-pere-martir",
+    "name": "Sant Pere Màrtir",
+    "theme": "Pot baixar Jesús a jugar?",
+    "description": "Reivindicació del joc infantil sense rols de gènere"
+  },
+  {
+    "id": "tordera",
+    "name": "Tordera",
+    "theme": "Tordelfs-Rivendel",
+    "description": "Univers El Senyor dels Anells"
+  },
+  {
+    "id": "travessia-sant-antoni",
+    "name": "Travessia de Sant Antoni",
+    "theme": "Can Travessia",
+    "description": "Una masia abandonada típica catalana"
+  },
+  {
+    "id": "verdi",
+    "name": "Verdi",
+    "theme": "Metamorfosi",
+    "description": "L'evolució d'eruga a papallona en un jardí"
+  }
+]

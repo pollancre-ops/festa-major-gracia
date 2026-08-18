@@ -11,7 +11,7 @@ main{max-width:780px;margin:auto}.hero{margin:18px 14px 14px;background:var(--re
 .event-card{position:relative;display:grid;grid-template-columns:64px 1fr 38px;gap:10px;background:var(--card);border:2px solid var(--ink);padding:13px 10px;margin-bottom:9px;box-shadow:2px 2px 0 rgba(23,23,23,.85)}.time-col{padding-right:7px;border-right:1px solid rgba(0,0,0,.25);text-align:left}.event-time{display:block;font-family:Georgia,serif;font-size:19px;line-height:1}.event-end{display:block;font-size:10px;color:var(--muted);margin-top:3px;line-height:1.15}.event-date{display:block;margin-top:8px;font-size:10px;font-weight:950;letter-spacing:.055em;text-transform:uppercase;color:var(--ink)}
 .event-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-bottom:5px}.category-pill,.recurring-mark,.now-pill{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;padding:3px 5px;border:1px solid var(--ink);background:var(--yellow)}.recurring-mark{background:#eee5ca}.now-pill{background:var(--green);color:white}.event-title{font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.06;margin:0 0 7px}.event-location{font-size:12px;font-weight:700;margin:0 0 8px}.event-location:before{content:"● ";font-size:8px}.event-actions{display:flex;justify-content:space-between;gap:8px;align-items:center}.map-link{font-size:11px;font-weight:850;color:var(--blue);text-decoration:none}.distance{font-size:10px;color:var(--muted);font-weight:800}.conflict-warning{font-size:10px;font-weight:850;line-height:1.25;margin:0 0 8px;padding:5px 7px;border:1px solid var(--ink);background:#ffe4a8}
 .state-actions{display:flex;flex-direction:column;align-items:center}.save-btn,.done-btn{border:0;background:transparent;width:34px;height:34px;display:grid;place-items:center;line-height:1}.save-btn{font-size:27px}.save-btn.saved{color:var(--red)}.done-btn{font-size:20px;margin-top:19px;border:1.5px solid transparent;border-radius:50%}.done-btn.done{background:var(--green);color:white;border-color:var(--ink);font-weight:950}
-.empty{border:2px dashed var(--ink);padding:28px 18px;text-align:center;background:rgba(255,250,240,.55)}.empty strong{display:block;font-family:Georgia,serif;font-size:22px;margin-bottom:6px}.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:30;height:calc(66px + var(--safe));padding-bottom:var(--safe);display:grid;grid-template-columns:repeat(3,1fr);background:var(--ink);color:white}.bottom{border:0;background:transparent;color:inherit;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.bottom span{font-size:21px}.bottom.active{background:var(--yellow);color:var(--ink)}.bottom b{display:inline-grid;place-items:center;min-width:16px;height:16px;border-radius:999px;background:var(--red);color:white;font-size:9px;margin-left:3px}.bottom b:empty{display:none}
+.empty{border:2px dashed var(--ink);padding:28px 18px;text-align:center;background:rgba(255,250,240,.55)}.empty strong{display:block;font-family:Georgia,serif;font-size:22px;margin-bottom:6px}.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:30;height:calc(66px + var(--safe));padding-bottom:var(--safe);display:grid;grid-template-columns:repeat(4,1fr);background:var(--ink);color:white}.bottom{border:0;background:transparent;color:inherit;font-size:10px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.bottom span{font-size:21px}.bottom.active{background:var(--yellow);color:var(--ink)}.bottom b{display:inline-grid;place-items:center;min-width:16px;height:16px;border-radius:999px;background:var(--red);color:white;font-size:9px;margin-left:3px}.bottom b:empty{display:none}
 @media(min-width:680px){.topbar{padding-left:max(16px,calc((100vw - 780px)/2));padding-right:max(16px,calc((100vw - 780px)/2))}.hero{margin-top:26px}.event-card{grid-template-columns:72px 1fr 42px;padding:15px}.event-title{font-size:20px}.bottom-nav{left:50%;right:auto;width:min(780px,100%);transform:translateX(-50%);border-left:2px solid var(--ink);border-right:2px solid var(--ink)}}
 
 /* Avís de nova versió */
@@ -20,3 +20,41 @@ body.modal-open{overflow:hidden}
 .update-card{position:relative;width:min(430px,100%);background:var(--paper);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:24px 20px 20px}
 .update-burst{position:absolute;right:16px;top:14px;width:40px;height:40px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:var(--yellow);font-size:23px}
 .update-kicker{margin:0 52px 7px 0;font-size:10px;font-weight:950;letter-spacing:.13em}.update-card h2{font-family:Georgia,"Times New Roman",serif;font-size:28px;line-height:1;margin:0 44px 16px 0;letter-spacing:-.035em}.update-card p{font-size:14px;line-height:1.42;margin:0 0 12px}.update-dismiss{width:100%;margin-top:5px;border:2px solid var(--ink);background:var(--yellow);padding:12px 16px;font-weight:950;box-shadow:3px 3px 0 var(--ink)}
+
+
+/* Carrers guarnits */
+.street-toolbar{padding:0 14px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.street-toolbar[hidden]{display:none}
+.street-tabs{display:flex;border:2px solid var(--ink);background:var(--card)}
+.street-filter{border:0;background:transparent;padding:8px 10px;font-size:11px;font-weight:850}
+.street-filter+.street-filter{border-left:2px solid var(--ink)}
+.street-filter.active{background:var(--ink);color:white}
+.street-progress{font-size:11px;font-weight:900;white-space:nowrap}
+.street-card{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;background:var(--card);border:2px solid var(--ink);padding:14px 12px;margin-bottom:9px;box-shadow:2px 2px 0 rgba(23,23,23,.85);transition:opacity .15s ease,background .15s ease}
+.street-card.visited{background:#eee5ca;opacity:.78}
+.street-kicker{margin:0 0 4px;font-size:9px;font-weight:950;letter-spacing:.1em;color:var(--muted)}
+.street-name{font-family:Georgia,"Times New Roman",serif;font-size:20px;line-height:1.05;margin:0 0 5px}
+.street-theme{font-size:13px;font-weight:900;margin:0 0 5px}
+.street-description{font-size:11px;line-height:1.35;color:var(--muted);margin:0 0 10px}
+.street-map-link{font-size:11px;font-weight:850;color:var(--blue);text-decoration:none}
+.street-visit-btn{width:78px;min-height:66px;border:2px solid var(--ink);background:var(--paper);padding:7px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:900;line-height:1.05}
+.street-check{width:26px;height:26px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-size:15px;color:transparent;background:white}
+.street-visit-btn.visited{background:var(--green);color:white}
+.street-visit-btn.visited .street-check{color:var(--ink);background:var(--yellow)}
+.update-signoff{margin-top:16px!important}
+@media(max-width:370px){
+  .bottom{font-size:9px}
+  .bottom span{font-size:19px}
+  .street-toolbar{align-items:flex-start;flex-direction:column}
+}
+
+.hero[hidden]{display:none}
+
+/* v14.2 — visibilitat estricta a Carrers */
+#dateNav[hidden],
+#filters[hidden],
+#programToolbar[hidden],
+#streetToolbar[hidden],
+#heroSection[hidden] {
+  display: none !important;
+}

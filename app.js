@@ -11,7 +11,7 @@ const INITIAL_FAVORITES=new Set(["e0046","e0056","e0063","e0064","e0065","e0080"
 const SUPABASE_URL='https://girfbvvetgpisigzvvsy.supabase.co';
 const SUPABASE_KEY='sb_publishable_vYvy1hWUDtc0ltmYvCbcqA_ohekPQSn';
 const PRIVATE_GROUP_ID='gracia26-clean-v10';
-const UPDATE_NOTICE_KEY='festigracia-update-notice-v13';
+const UPDATE_NOTICE_KEY='festigracia-update-notice-v14';
 const PRIVATE_LAUNCH_KEY='festigracia-private-launch-v13';
 const requestedGroup=new URLSearchParams(location.search).get('group');
 // Només l'enllaç privat exacte activa la sincronització compartida.
@@ -40,8 +40,10 @@ const VISIT_SESSION_KEY='festigracia-visit-logged-v13';
 const LOCAL_KEY=IS_PRIVATE?`festigracia-v10-state-${PRIVATE_GROUP_ID}`:'festigracia-v12-public-state';
 const PENDING_KEY=IS_PRIVATE?`festigracia-v10-pending-${PRIVATE_GROUP_ID}`:null;
 const SEEDED_MARKER='meta:seeded-v10';
+const STREET_VISITED_KEY='festigracia-street-visits-v14';
 
 let activities=[];
+let streets=[];
 let selectedDate=defaultDate();
 let view='all';
 let category='all';
@@ -52,6 +54,8 @@ let deferredPrompt=null;
 let lastFestivalDay=festivalDayISO();
 let saved=new Set();
 let done=new Set();
+let streetVisited=new Set();
+let streetView='all';
 
 const $=s=>document.querySelector(s);
 const list=$('#eventList');
@@ -67,6 +71,56 @@ function compactDate(iso){const d=new Date(iso+'T12:00:00');return `${WEEK[d.get
 function sectionDate(iso){const d=new Date(iso+'T12:00:00');return `${WEEK[d.getDay()]} ${d.getDate()} D’AGOST`;}
 function displayName(c){const v=CATS[c]||CATS.altres;return `${v[0]} ${v[1]}`;}
 function mapUrl(loc){return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc+', Gràcia, Barcelona')}`;}
+
+function streetMapUrl(name){return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name+', Gràcia, Barcelona')}`;}
+function restoreStreetVisits(){try{streetVisited=new Set(JSON.parse(localStorage.getItem(STREET_VISITED_KEY)||'[]'));}catch{streetVisited=new Set();}}
+function persistStreetVisits(){localStorage.setItem(STREET_VISITED_KEY,JSON.stringify([...streetVisited]));}
+function toggleStreetVisited(id){
+  if(streetVisited.has(id))streetVisited.delete(id);else streetVisited.add(id);
+  persistStreetVisits();render();
+}
+function filteredStreets(){
+  let a=[...streets];
+  if(streetView==='pending')a=a.filter(s=>!streetVisited.has(s.id));
+  if(streetView==='visited')a=a.filter(s=>streetVisited.has(s.id));
+  if(query){
+    const q=query.toLowerCase();
+    a=a.filter(s=>`${s.name} ${s.theme} ${s.description}`.toLowerCase().includes(q));
+  }
+  return a;
+}
+function streetCard(s){
+  const n=$('#streetTemplate').content.firstElementChild.cloneNode(true);
+  const visited=streetVisited.has(s.id);
+  n.classList.toggle('visited',visited);
+  n.querySelector('.street-name').textContent=s.name;
+  n.querySelector('.street-theme').textContent=s.theme;
+  n.querySelector('.street-description').textContent=s.description;
+  const map=n.querySelector('.street-map-link');map.href=streetMapUrl(s.name);
+  const b=n.querySelector('.street-visit-btn');
+  b.classList.toggle('visited',visited);
+  b.setAttribute('aria-pressed',visited?'true':'false');
+  b.setAttribute('aria-label',visited?'Marca com a pendent':'Marca com a visitat');
+  b.querySelector('.street-visit-label').textContent=visited?'Visitat':'Marca visitat';
+  b.onclick=()=>toggleStreetVisited(s.id);
+  return n;
+}
+function renderStreets(){
+  list.innerHTML='';
+  const a=filteredStreets();
+  const visited=streets.filter(s=>streetVisited.has(s.id)).length;
+  $('#streetProgress').textContent=`${visited} de ${streets.length} visitats`;
+  if(a.length){
+    const h=document.createElement('div');h.className='section-label';
+    h.textContent=streetView==='visited'?'Visitats':streetView==='pending'?'Pendents':'Carrers guarnits';
+    list.appendChild(h);
+    a.forEach(s=>list.appendChild(streetCard(s)));
+  }else{
+    list.innerHTML='<div class="empty"><strong>No hi ha carrers aquí.</strong>Canvia el filtre o la cerca.</div>';
+  }
+  status.textContent=`${a.length} carrers`;
+  updateCounts();
+}
 
 function normalizeSelectedDate(){const av=tab==='done'?DAYS:availableDays();if(selectedDate==='all')return;if(!av.includes(selectedDate))selectedDate=av[0]||'all';}
 function renderDays(){
@@ -127,23 +181,47 @@ function addAllDaysSections(a,conflicts){const grouped={};sortEvents(a).forEach(
 
 function render(){
   normalizeSelectedDate();list.innerHTML='';status.textContent='';
+  const isStreets=tab==='streets';
+  $('#heroSection').hidden=false;
   $('#programToolbar').hidden=tab!=='program';
+  $('#streetToolbar').hidden=!isStreets;
+  $('#dateNav').hidden=isStreets;
+  $('#filters').hidden=isStreets;
+
+  const search=$('#searchInput');
+  if(search)search.placeholder='Cerca activitat, artista o carrer…';
+
+  if(isStreets){
+    $('#heroEyebrow').textContent='CARRERS';
+    $('#heroTitle').textContent='Porta el compte dels carrers que ja has visitat.';
+    renderStreets();
+    return;
+  }
+
   const a=baseFiltered();const conflicts=tab==='saved'?conflictIds(a):new Set();
   if(tab==='program'){$('#heroEyebrow').textContent='PROGRAMA';$('#heroTitle').textContent=selectedDate==='all'?'Tota la Festa Major, en una sola vista.':'Tot el que passa aquest dia.';}
-  if(tab==='saved'){$('#heroEyebrow').textContent='EL MEU PLA';$('#heroTitle').textContent=IS_PRIVATE?'La vostra agenda compartida.':'La teva agenda.';}
-  if(tab==='done'){$('#heroEyebrow').textContent='JA HEM FET';$('#heroTitle').textContent=IS_PRIVATE?'Els plans que ja heu viscut.':'Els plans que ja has viscut.';}
+  if(tab==='saved'){$('#heroEyebrow').textContent='EL MEU PLA';$('#heroTitle').textContent='La teva agenda de les festes de Gràcia.';}
+  if(tab==='done'){$('#heroEyebrow').textContent='JA HE FET';$('#heroTitle').textContent='Els plans que ja has viscut.';}
 
   if(tab==='program'&&view==='now'){
     const cur=a.filter(currentMatch),up=a.filter(e=>!cur.includes(e)&&upcomingMatch(e));addSection('Ara',cur,conflicts);addSection('A continuació · 2 h',up,conflicts);
     if(!cur.length&&!up.length)list.innerHTML='<div class="empty"><strong>Cap activitat en aquesta franja.</strong>Prova “Tot el dia”.</div>';
   }else if(selectedDate==='all'&&!nearMode){addAllDaysSections(a,conflicts);}
-  else addSection(nearMode?'Més a prop':tab==='saved'?'El meu pla':tab==='done'?'Ja hem fet':'Programa',a,conflicts);
+  else addSection(nearMode?'Més a prop':tab==='saved'?'El meu pla':tab==='done'?'Ja he fet':'Programa',a,conflicts);
 
   if(!a.length&&!(tab==='program'&&view==='now'))list.innerHTML='<div class="empty"><strong>No hi ha activitats aquí.</strong>Canvia el dia, els filtres o la cerca.</div>';
   status.textContent=`${a.length} activitats`;
   updateCounts();
 }
-function updateCounts(){const av=new Set(availableDays());const plan=activities.filter(e=>av.has(e.date)&&saved.has(e.id)&&!done.has(e.id)).length;const finished=activities.filter(e=>done.has(e.id)).length;$('#savedCount').textContent=plan||'';$('#doneCount').textContent=finished||'';}
+function updateCounts(){
+  const av=new Set(availableDays());
+  const plan=activities.filter(e=>av.has(e.date)&&saved.has(e.id)&&!done.has(e.id)).length;
+  const finished=activities.filter(e=>done.has(e.id)).length;
+  const visited=streets.filter(s=>streetVisited.has(s.id)).length;
+  $('#savedCount').textContent=plan||'';
+  $('#doneCount').textContent=finished||'';
+  $('#streetCount').textContent=visited||'';
+}
 
 // ── Avís d'actualització ───────────────────────────────────────────────
 function showUpdateNotice(){
@@ -223,14 +301,43 @@ function nearMe(){if(!navigator.geolocation){status.textContent='Aquest navegado
 
 async function boot(){
   restoreLocal();
-  const r=await fetch('activities.json?v=13.0.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
+  restoreStreetVisits();
+  const r=await fetch('activities.json?v=14.3.0',{cache:'no-store'});if(!r.ok)throw new Error(`activities.json ${r.status}`);activities=await r.json();if(!Array.isArray(activities)||!activities.length)throw new Error('activities.json buit');
+  const sr=await fetch('streets.json?v=14.3.0',{cache:'no-store'});if(!sr.ok)throw new Error(`streets.json ${sr.status}`);streets=await sr.json();if(!Array.isArray(streets)||!streets.length)throw new Error('streets.json buit');
   renderDays();renderFilters();render();
   showUpdateNotice();
   logVisit();
-  $('#searchInput').oninput=e=>{query=e.target.value.trim();render();};
+  $('#searchInput').oninput=e=>{
+    query=e.target.value.trim();
+    if(tab==='streets' && query){
+      // La cerca és transversal però només cerca activitats.
+      list.innerHTML='';
+      const prevTab=tab;
+      tab='program';
+      render();
+      tab=prevTab;
+      $('#heroSection').hidden=true;
+      $('#programToolbar').hidden=true;
+      $('#streetToolbar').hidden=true;
+      $('#dateNav').hidden=true;
+      $('#filters').hidden=true;
+      status.textContent = `${baseFiltered().length} activitats`;
+    }else{
+      render();
+    }
+  };
   document.querySelectorAll('.seg').forEach(b=>b.onclick=()=>{view=b.dataset.view;document.querySelectorAll('.seg').forEach(x=>x.classList.toggle('active',x===b));render();});
+  document.querySelectorAll('.street-filter').forEach(b=>b.onclick=()=>{streetView=b.dataset.streetView;document.querySelectorAll('.street-filter').forEach(x=>x.classList.toggle('active',x===b));render();});
   $('#nearBtn').onclick=nearMe;
-  document.querySelectorAll('.bottom').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('.bottom').forEach(x=>x.classList.toggle('active',x===b));selectedDate=tab==='program'?defaultDate():'all';view='all';nearMode=false;$('#nearBtn').classList.remove('active');document.querySelectorAll('.seg').forEach(x=>x.classList.toggle('active',x.dataset.view==='all'));renderDays();render();});
+  document.querySelectorAll('.bottom').forEach(b=>b.onclick=()=>{
+    const previous=tab;tab=b.dataset.tab;
+    document.querySelectorAll('.bottom').forEach(x=>x.classList.toggle('active',x===b));
+    selectedDate=tab==='program'?defaultDate():'all';view='all';nearMode=false;
+    $('#nearBtn').classList.remove('active');
+    document.querySelectorAll('.seg').forEach(x=>x.classList.toggle('active',x.dataset.view==='all'));
+    if(previous==='streets'||tab==='streets'){query='';$('#searchInput').value='';}
+    renderDays();render();
+  });
 
   if(IS_PRIVATE){
     try{await bulkSeed();await pullCloud({silent:false});}
@@ -239,7 +346,7 @@ async function boot(){
   }
   window.addEventListener('online',()=>{if(IS_PRIVATE)pullCloud({silent:false});logVisit();});
   setInterval(()=>{const current=festivalDayISO();if(current!==lastFestivalDay){lastFestivalDay=current;normalizeSelectedDate();renderDays();render();}},60000);
-  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=13.0.0').catch(()=>{});
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js?v=14.3.0').catch(()=>{});
 }
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').hidden=false;});
 $('#installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('#installBtn').hidden=true;}};
